@@ -20,8 +20,31 @@
     "type": "module"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; frame-src 'self' https://www.youtube.com; object-src 'self'"
+    "extension_pages": "script-src 'self'; frame-src 'self' https:; object-src 'self'"
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://*.twitch.tv/*"
+      ],
+      "css": [
+        "clean-player.css"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "audio-controller.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_end"
+    }
+  ],
   "declarative_net_request": {
     "rule_resources": [
       {

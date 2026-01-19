@@ -4,12 +4,14 @@ interface Stream {
     id: string;
     url: string;
     isMuted: boolean;
+    volume: number;
     isFullscreen: boolean;
 }
 
 function App() {
     const [streams, setStreams] = useState<Stream[]>([]);
     const [urlInput, setUrlInput] = useState('');
+    const iframeRefs = React.useRef<{ [key: string]: HTMLIFrameElement | null }>({});
 
     const addStream = () => {
         if (!urlInput) return;
@@ -23,6 +25,7 @@ function App() {
             id: Math.random().toString(36).substring(2, 11),
             url: formattedUrl,
             isMuted: true,
+            volume: 0,
             isFullscreen: false,
         };
 
@@ -35,7 +38,32 @@ function App() {
     };
 
     const toggleMute = (id: string) => {
-        setStreams(streams.map(s => s.id === id ? { ...s, isMuted: !s.isMuted } : s));
+        const stream = streams.find(s => s.id === id);
+        if (!stream) return;
+
+        const newMuted = !stream.isMuted;
+        setStreams(streams.map(s => s.id === id ? { ...s, isMuted: newMuted } : s));
+        sendMessage(id, 'SET_MUTE', { value: newMuted });
+
+        // If unmuting, ensure volume is restored
+        if (!newMuted) {
+            sendMessage(id, 'SET_VOLUME', { value: stream.volume / 100 || 1 });
+        }
+    };
+
+    const handleVolumeChange = (id: string, newVolume: number) => {
+        setStreams(streams.map(s => s.id === id ? { ...s, volume: newVolume, isMuted: newVolume === 0 } : s));
+        sendMessage(id, 'SET_VOLUME', { value: newVolume / 100 });
+        if (newVolume > 0) {
+            sendMessage(id, 'SET_MUTE', { value: false });
+        }
+    };
+
+    const sendMessage = (streamId: string, type: string, payload: any) => {
+        const iframe = iframeRefs.current[streamId];
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({ type, payload }, '*');
+        }
     };
 
     const getGridTemplate = () => {
@@ -83,6 +111,15 @@ function App() {
                                 >
                                     {stream.isMuted ? '🔇' : '🔊'}
                                 </button>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={stream.isMuted ? 0 : stream.volume}
+                                    onChange={(e) => handleVolumeChange(stream.id, Number(e.target.value))}
+                                    className="volume-slider"
+                                    style={{ width: '60px', marginLeft: '5px', marginRight: '5px' }}
+                                />
                                 <button
                                     className="control-btn"
                                     onClick={() => removeStream(stream.id)}
@@ -92,6 +129,7 @@ function App() {
                                 </button>
                             </div>
                             <iframe
+                                ref={(el: HTMLIFrameElement | null) => { if (el) iframeRefs.current[stream.id] = el }}
                                 src={stream.url}
                                 allow="autoplay; encrypted-media; fullscreen"
                                 title={`Stream ${stream.id}`}

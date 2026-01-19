@@ -1,0 +1,64 @@
+/* YouTube Clean Player */
+ytd-masthead,
+#masthead-container,
+#secondary,
+#comments,
+#related,
+ytd-watch-metadata,
+#columns>#secondary,
+#below,
+ytd-merch-shelf-renderer {
+    display: none !important;
+}
+
+ytd-app {
+    background: black !important;
+}
+
+#page-manager {
+    margin-top: 0 !important;
+}
+
+#columns {
+    display: block !important;
+    max-width: none !important;
+}
+
+#primary {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+ytd-watch-flexy[flexy] #player-container-outer {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+}
+
+ytd-watch-flexy[flexy] #player-container-inner {
+    padding-top: 0 !important;
+}
+
+#player-full-bleed-container {
+    height: 100vh !important;
+    max-height: none !important;
+}
+
+html,
+body {
+    overflow: hidden !important;
+}
+
+/* Twitch Clean Player */
+nav.top-nav,
+div[data-a-target="right-column-chat-bar"],
+div[data-a-target="side-nav-bar"],
+.Layout-sc-1xcs6mc-0.eBsx {
+    display: none !important;
+}
+
+.persistent-player {
+    width: 100vw !important;
+    height: 100vh !important;
+}

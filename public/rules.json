@@ -1,47 +1,6 @@
 [
     {
         "id": 1,
-        "priority": 10,
-        "action": {
-            "type": "modifyHeaders",
-            "responseHeaders": [
-                {
-                    "header": "X-Frame-Options",
-                    "operation": "remove"
-                },
-                {
-                    "header": "Frame-Options",
-                    "operation": "remove"
-                },
-                {
-                    "header": "Content-Security-Policy",
-                    "operation": "remove"
-                }
-            ],
-            "requestHeaders": [
-                {
-                    "header": "Referer",
-                    "operation": "set",
-                    "value": "https://www.youtube.com/"
-                },
-                {
-                    "header": "Origin",
-                    "operation": "set",
-                    "value": "https://www.youtube.com"
-                }
-            ]
-        },
-        "condition": {
-            "urlFilter": "*youtube.com*",
-            "resourceTypes": [
-                "sub_frame",
-                "script",
-                "xmlhttprequest"
-            ]
-        }
-    },
-    {
-        "id": 2,
         "priority": 1,
         "action": {
             "type": "modifyHeaders",
@@ -57,13 +16,18 @@
                 {
                     "header": "Content-Security-Policy",
                     "operation": "remove"
+                },
+                {
+                    "header": "Cross-Origin-Embedder-Policy",
+                    "operation": "remove"
                 }
             ]
         },
         "condition": {
             "urlFilter": "*",
             "resourceTypes": [
-                "sub_frame"
+                "sub_frame",
+                "main_frame"
             ]
         }
     }
